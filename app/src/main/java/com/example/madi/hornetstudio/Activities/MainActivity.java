@@ -62,10 +62,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setMainPage() {
-        Fragment fragment = new DashboardFragment();
+        Fragment fragment = new SearchFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().
                 beginTransaction();
-        Log.d(TAG, "Transaction have begun");
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
     }

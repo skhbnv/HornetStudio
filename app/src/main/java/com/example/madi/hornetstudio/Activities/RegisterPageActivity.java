@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,8 +22,13 @@ import android.widget.Toast;
 import com.example.madi.hornetstudio.Models.SalonsCardInfo;
 import com.example.madi.hornetstudio.R;
 import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,12 +43,17 @@ import java.util.ArrayList;
 
 public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView mSalonName;
-    private TextView mSalonType;
     private TextView mAddress;
     private TextView mInstagram;
     private TextView mPhone;
     private ImageView mSalonBackPoster;
     private TextView mClickToDownload;
+
+    private FirebaseAuth mAuth;
+
+    private EditText mLogin;
+    private EditText mPassword;
+    private EditText mConfirmPassword;
 
     private StorageReference mStorageRef;
     private DatabaseReference mDataBase;
@@ -55,6 +66,7 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     private TextView mMassage;
     private TextView mDepilation;
     private Uri mImageUri;
+    private String photoLink;
 
     private AlertDialog.Builder mBuilder;
 
@@ -94,7 +106,12 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null
                 && data.getData() != null){
             mImageUri = data.getData();
-            Picasso.with(this).load(mImageUri).into(mSalonBackPoster);
+            Picasso.
+                    with(this).
+                    load(mImageUri).
+                    centerCrop().
+                    resize(1400,600).
+                    into(mSalonBackPoster);
             mClickToDownload.setVisibility(View.GONE);
         }
     }
@@ -102,13 +119,19 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     private void initUI() {
         mSalonBackPoster = findViewById(R.id.salon_backgr);
         mSalonName = findViewById(R.id.register_salon_name);
-        mSalonType = findViewById(R.id.register_salon_type);
         mAddress = findViewById(R.id.registration_salon_address);
         mInstagram = findViewById(R.id.register_instagram_account);
         mPhone = findViewById(R.id.register_phone);
         mButtonReg = findViewById(R.id.regpage_register_button);
         downloadImage = findViewById(R.id.image_downloader);
         mClickToDownload = findViewById(R.id.click_to_download);
+
+        mAuth = FirebaseAuth.getInstance();
+
+
+        mLogin = findViewById(R.id.regsal_login);
+        mPassword = findViewById(R.id.regsal_password);
+        mConfirmPassword = findViewById(R.id.regsal_confirm_password);
 
         mHair = findViewById(R.id.hair_list);
         mNail = findViewById(R.id.nail_list);
@@ -328,8 +351,8 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
                 });
                 break;
         }
-        if (v.getId() == R.id.hair_list && v.getId() == R.id.nail_list
-                && v.getId() == R.id.massage_list && v.getId() == R.id.depil_list) {
+        if (v.getId() == R.id.hair_list || v.getId() == R.id.nail_list
+                || v.getId() == R.id.massage_list || v.getId() == R.id.depil_list) {
             AlertDialog mDialog = mBuilder.create();
             mDialog.show();
         }
@@ -346,51 +369,85 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         if(mImageUri != null){
             StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()+"."+
                     getFileExtension(mImageUri));
-            mUploads = fileReference.putFile(mImageUri).
-                    addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            mUploads = fileReference.putFile(mImageUri).addOnSuccessListener(
+                    new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Task<Uri> task = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                    task.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            SalonsCardInfo obj = new SalonsCardInfo(mSalonName.getText().toString(),
-                                    0, 0,
-                                    mAddress.getText().toString(),
-                                    mInstagram.getText().toString(),
-                                    allServices,
-                                    taskSnapshot.getStorage().getDownloadUrl().toString());
+                        public void onSuccess(Uri uri) {
+                            photoLink = uri.toString();
 
-                            DatabaseReference myRef = FirebaseDatabase.getInstance().
-                                    getReference("salons");
-                            String key = myRef.push().getKey();
-                            myRef.child(key).setValue(obj)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Toast.makeText(RegisterPageActivity.this,
-                                                    "Succsessfully added"
-                                                    , Toast.LENGTH_SHORT).show();
-                                            finishAct();
-                                        }
-                                    })
-                            ;
                         }
-                    })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(RegisterPageActivity.this,
-                            e.getMessage(), Toast.LENGTH_SHORT).show();
-
+                    });
                 }
-            })
-            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+            });
 
-                }
-            })
-            ;
         }else{
             Toast.makeText(this, "no file selected", Toast.LENGTH_SHORT).show();
         }
+        registerObject();
+
+    }
+
+    private void registerObject() {
+        String ownerID = "";
+
+        if (mPassword.getText().toString().equals(mConfirmPassword.getText().toString())){
+            mAuth.createUserWithEmailAndPassword(mLogin.getText().toString(),
+                    mPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()){
+                        Toast.makeText(RegisterPageActivity.this
+                                ,"success", Toast.LENGTH_LONG).show();
+                        signInNewUser();
+                    }else {
+                        Toast.makeText(RegisterPageActivity.this
+                                ,task.getException().toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void signInNewUser() {
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        mAuth.signInWithEmailAndPassword(mLogin.getText().toString(),
+                mPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    SalonsCardInfo obj = new SalonsCardInfo(
+                            mSalonName.getText().toString(),
+                            mPhone.getText().toString(),
+                            0, 0,
+                            mAddress.getText().toString(),
+                            mInstagram.getText().toString(),
+                            allServices,
+                            photoLink,
+                            currentUser.getUid()
+                            );
+
+                    DatabaseReference myRef = FirebaseDatabase.getInstance().
+                            getReference("salons");
+                    String key = myRef.push().getKey();
+                    myRef.child(key).setValue(obj)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(RegisterPageActivity.this,
+                                            "Succsessfully added"
+                                            , Toast.LENGTH_SHORT).show();
+                                    finishAct();
+                                }
+                            });
+
+                    Log.d("___", "onSuccess: " + photoLink);
+                }
+            }
+        });
     }
 
     private void finishAct() {

@@ -1,11 +1,4 @@
 <resources>
-    <string-array name="haircuts">
-        <item>Men</item>
-        <item>Women</item>
-        <item>Ukladka</item>
-        <item>Child</item>
-    </string-array>
-
     <string name="app_name">Hornet studio</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -14,9 +7,9 @@
     <string name="main">Главная</string>
     <string name="chats">Чаты</string>
     <string name="we_dont_know_who_you_are">Мы не знаем кто вы :(</string>
-    <string name="fill_to_register">заполните поля ниже для регистрации</string>
+    <string name="fill_to_register">Войдите в свой аккаунт или зарегистрируйтесь ниже</string>
     <string name="name_hint">ваше имя</string>
-    <string name="phone_hint">введите номер телефона</string>
+    <string name="phone_hint">номер телефона</string>
     <string name="enter">войти</string>
     <string name="register_salon">зарегистрировать салон</string>
     <string name="enter_salon_name">Введите название вашего салона</string>
@@ -24,12 +17,22 @@
     <string name="enter_an_adress">введите адрес</string>
     <string name="your_intagram">ваш инстаграм</string>
     <string name="enter_phone_number">введите телефон контактного лица</string>
-    <string name="haircuts">Стрижки +</string>
-    <string name="manicure">Маникюр +</string>
-    <string name="massage">Массаж +</string>
-    <string name="depilation">Депиляция +</string>
+    <string name="haircuts">Стрижки </string>
+    <string name="manicure">Маникюр </string>
+    <string name="massage">Массаж </string>
+    <string name="depilation">Депиляция </string>
     <string name="click_to_download_images">нажмите, чтобы загрузить изображение</string>
     <string name="select_services">Выберите услуги</string>
     <string name="register_register_button">зарегистрироваться</string>
+    <string name="make_appoinment">записаться</string>
+    <string name="services">Услуги</string>
+    <string name="registration">Зарегистрироваться</string>
+    <string name="password">пароль</string>
+    <string name="signed_in">Это ваша личная страница, здесь вы можете отслеживать ваши заказы</string>
+    <string name="confirm_password">подтвердите пароль</string>
+    <string name="you_dont_have_yet">у вас пока нет заказов</string>
+    <string name="attention">Внимание вы вводите логин вашего салона, он будет использоваться в дальнейшем для действий от лица салона</string>
+    <string name="enter_login">введите логин</string>
+    <string name="cinfirm_pass">повторите пароль</string>
 </resources>
 

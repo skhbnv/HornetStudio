@@ -50,7 +50,11 @@ public class DashboardFragment extends Fragment implements ItemClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        connectToDatabase();
+        if (mData == null) {
+            connectToDatabase();
+        }else{
+            onDataLoaded(mData);
+        }
     }
 
 

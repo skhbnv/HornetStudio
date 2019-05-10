@@ -12,18 +12,23 @@ public class SalonsCardInfo implements Parcelable{
     private int sum_of_feedbacks;
     private String address;
     private String instagram;
+    private String ownerID;
+    private String phone;
     private ArrayList<String> services;
 
     private String backPoster;
 
-    public SalonsCardInfo(){ }
+    public SalonsCardInfo(){
 
+    }
     protected SalonsCardInfo(Parcel in) {
         salon_name = in.readString();
         vote_counter = in.readInt();
         sum_of_feedbacks = in.readInt();
         address = in.readString();
         instagram = in.readString();
+        ownerID = in.readString();
+        phone = in.readString();
         services = in.createStringArrayList();
         backPoster = in.readString();
     }
@@ -40,19 +45,31 @@ public class SalonsCardInfo implements Parcelable{
         }
     };
 
+    public String getPhone() {
+        return phone;
+    }
+
+
     public String getBackPoster() {
         return backPoster;
     }
 
-    public SalonsCardInfo(String salon_name, int vote_counter, int sum_of_feedbacks, String address,
-                          String instagram, ArrayList<String> services, String backPoster) {
+    public SalonsCardInfo(String salon_name, String phone, int vote_counter, int sum_of_feedbacks,
+                          String address, String instagram, ArrayList<String> services,
+                          String backPoster, String ownerID) {
         this.salon_name = salon_name;
         this.vote_counter = vote_counter;
         this.sum_of_feedbacks = sum_of_feedbacks;
         this.address = address;
+        this.phone = phone;
+        this.ownerID = ownerID;
         this.instagram = instagram;
         this.services = services;
         this.backPoster = backPoster;
+    }
+
+    public String getOwnerID() {
+        return ownerID;
     }
 
     public String getSalon_name() {
@@ -119,6 +136,8 @@ public class SalonsCardInfo implements Parcelable{
         dest.writeInt(sum_of_feedbacks);
         dest.writeString(address);
         dest.writeString(instagram);
+        dest.writeString(ownerID);
+        dest.writeString(phone);
         dest.writeStringList(services);
         dest.writeString(backPoster);
     }

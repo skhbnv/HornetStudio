@@ -171,6 +171,7 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="15dp"
             />
+
         <GridLayout
             android:columnCount="2"
             android:layout_height="wrap_content"
@@ -228,6 +229,71 @@
                     tools:targetApi="lollipop" />
 
         </GridLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:background="#FFF"
+            android:padding="10dp"
+            android:elevation="5dp"
+            >
+            <TextView
+                android:gravity="center_horizontal"
+                android:text="@string/attention"
+                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+
+                android:layout_marginBottom="10dp"
+                />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
+                    android:layout_width="250dp">
+                    <EditText
+                        android:id="@+id/regsal_login"
+                        android:textSize="14sp"
+                        android:textColor="#AFAFAF"
+                        android:drawableLeft="@drawable/avatar"
+                        android:drawablePadding="5dp"
+                        android:hint="@string/enter_login"
+                        android:padding="5dp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:layout_width="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/regsal_password"
+                        android:textColor="#AFAFAF"
+                        android:drawableLeft="@drawable/lock"
+                        android:textSize="14sp"
+                        android:hint="@string/password"
+                        android:drawablePadding="5dp"
+                        android:padding="5dp"
+                        android:inputType="textPassword"
+                        android:backgroundTint="@android:color/transparent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:inputType="textPassword"
+                        android:id="@+id/regsal_confirm_password"
+                        android:textColor="#AFAFAF"
+                        android:hint="@string/cinfirm_pass"
+                        android:textSize="14sp"
+                        android:drawableLeft="@drawable/lock"
+                        android:drawablePadding="5dp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="18dp" />
+
         <Button
             android:id="@+id/regpage_register_button"
             android:textSize="12sp"
